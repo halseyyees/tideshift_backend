@@ -34,11 +34,20 @@ DB_PORT = os.environ.get("DB_PORT")
 DB_NAME = os.environ.get("DB_NAME")
 SSL_PATH = os.environ.get("SSL_PATH")
 
-# Configure SQLAlchemy with secure credentials
-app.config['SQLALCHEMY_DATABASE_URI'] = (
-    f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    f"?charset=utf8mb4"
-)
+# Configure SQLAlchemy with secure credentials (supporting SSL ca.pem if provided)
+BASE_DIR = os.path.abspath(os.path.dirname(__file__))
+ssl_file_path = os.path.join(BASE_DIR, SSL_PATH) if SSL_PATH else None
+
+if ssl_file_path:
+    app.config['SQLALCHEMY_DATABASE_URI'] = (
+        f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        f"?charset=utf8mb4&ssl_ca={ssl_file_path}"
+    )
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = (
+        f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        f"?charset=utf8mb4"
+    )
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
@@ -415,7 +424,7 @@ def check_goals_achieved():
 
 
 # ============================
-# ROUTE: Fecth latest goals
+# ROUTE: Fetch latest goals
 # ============================
 @app.route('/latest-goals', methods=['GET'])
 @firebase_required
