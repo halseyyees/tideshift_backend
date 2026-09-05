@@ -37,7 +37,7 @@ SSL_PATH = os.environ.get("SSL_PATH")
 # Configure SQLAlchemy with secure credentials
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-    f"?charset=utf8mb4&ssl_ca={SSL_PATH}"
+    f"?charset=utf8mb4"
 )
 
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
